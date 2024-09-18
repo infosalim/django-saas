@@ -1,0 +1,50 @@
+
+### `.gitignore`
+
+```gitignore
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.python-version
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+/static/
+media/
+
+# Environments
+myvenv/
+.venv/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs_analysis.dat
+*.ncb
+*.swp
+*.swo
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Coverage
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
