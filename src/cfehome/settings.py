@@ -31,7 +31,7 @@ DEBUG = config("DJANGO_DEBUG", cast=bool)
 
 
 ALLOWED_HOSTS = [
-    ".railway.app" # https://saas.prod.railway.app
+    ".railway.app"  # https://saas.prod.railway.app
 ]
 
 if DEBUG:
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # my-apps 
+    # my-apps
     'visits',
 ]
 
@@ -95,6 +95,38 @@ DATABASES = {
     }
 }
 
+CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=30) 
+DATABASE_URL = config("DATABASE_URL", cast=str)
+
+if DATABASE_URL is not None:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=CONN_MAX_AGE,
+            conn_health_checks=True
+        )
+    }
+
+
+
+# Add these at the top of your settings.py
+# from os import getenv
+# from dotenv import load_dotenv
+
+# Replace the DATABASES section of your settings.py with this
+# tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config.path.replace('/', ''),
+#         'USER': config.username,
+#         'PASSWORD': config.password,
+#         'HOST': config.hostname,
+#         'PORT': 5432,
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
