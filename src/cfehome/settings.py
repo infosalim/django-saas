@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(moma6#iu&ra7#=q2gynb45d477qi$s-hqd&1#o^a@+hhe7q0$'
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = os.environ.get("DEBUG") or False
+# DEBUG = str(os.environ.get("DJANGO_DEBUG")).lower() = "true"
+DEBUG = config("DJANGO_DEBUG", cast=bool)
+
 
 ALLOWED_HOSTS = [
-    ".railway.app" # https://saas.prod.railway.app
+    ".railway.app"  # https://saas.prod.railway.app
 ]
 
 if DEBUG:
@@ -45,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # my-apps 
+    # my-apps
     'visits',
 ]
 
@@ -90,6 +95,38 @@ DATABASES = {
     }
 }
 
+CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=30) 
+DATABASE_URL = config("DATABASE_URL", cast=str)
+
+if DATABASE_URL is not None:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=CONN_MAX_AGE,
+            conn_health_checks=True
+        )
+    }
+
+
+
+# Add these at the top of your settings.py
+# from os import getenv
+# from dotenv import load_dotenv
+
+# Replace the DATABASES section of your settings.py with this
+# tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config.path.replace('/', ''),
+#         'USER': config.username,
+#         'PASSWORD': config.password,
+#         'HOST': config.hostname,
+#         'PORT': 5432,
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -126,6 +163,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_BASE_DIR = BASE_DIR / 'staticfiles'
+STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / 'vendors'
+
+
+# source(s) for python manage.py collectstatic
+STATICFILES_DIRS = [
+    STATICFILES_BASE_DIR
+]
+# output for python manage.py collectstatic
+# local cdn
+# STATIC_ROOT = BASE_DIR.parent / 'local-cdn'
+STATIC_ROOT = BASE_DIR / 'local-cdn'
+# if not DEBUG:
+    # STATIC_ROOT = BASE_DIR / 'prod-cdn'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
