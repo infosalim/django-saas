@@ -21,9 +21,9 @@ from .views import home_view, about_view
 
 
 urlpatterns = [
-    path("", home_view),
+    path("", home_view, name='home'),
     path("register/", auth_views.register_view),
-    path("login/", auth_views.login_view),
+    path("login/", auth_views.login_view, name='login'),
     path("about/", about_view),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
