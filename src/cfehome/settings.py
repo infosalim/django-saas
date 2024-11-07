@@ -53,11 +53,12 @@ INSTALLED_APPS = [
     # my-apps
     'visits',
     'commando',
-    # third party apps 
+    # third party apps
     "allauth_ui",
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     "widget_tweaks",
     "slippers",
 ]
@@ -155,11 +156,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Django AllAuth Config 
+# Django AllAuth Config
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_VERIFICATION='mandatory'
-ACCOUNT_EMAIL_SUBJECT_PREFIX='[CFE]'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[CFE]'
 ACCOUNT_EMAIL_REQUIRED = True
 AUTHENTICATION_BACKENDS = [
     # ...
@@ -182,6 +183,16 @@ SOCIALACCOUNT_PROVIDERS = {
     #         'key': ''
     #     }
     # }
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
 }
 
 # Internationalization
@@ -217,22 +228,24 @@ STATIC_ROOT = BASE_DIR / 'local-cdn'
 # default backend
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config("EMAIL_HOST", cast=str, default=None)
-EMAIL_PORT = config("EMAIL_PORT", cast=str, default='587') # Recommended
+EMAIL_PORT = config("EMAIL_PORT", cast=str, default='587')  # Recommended
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", cast=str, default=None)
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", cast=str, default=None)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)  # Use EMAIL_PORT 587 for TLS
-EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)  # EUse MAIL_PORT 465 for SSL
+# Use EMAIL_PORT 587 for TLS
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
+# EUse MAIL_PORT 465 for SSL
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
 
-ADMIN_USER_NAME=config("ADMIN_USER_NAME", default="Admin user")
-ADMIN_USER_EMAIL=config("ADMIN_USER_EMAIL", default=None)
+ADMIN_USER_NAME = config("ADMIN_USER_NAME", default="Admin user")
+ADMIN_USER_EMAIL = config("ADMIN_USER_EMAIL", default=None)
 
-MANAGERS=[]
-ADMINS=[]
+MANAGERS = []
+ADMINS = []
 if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
-    ADMINS +=[
+    ADMINS += [
         (f'{ADMIN_USER_NAME}', f'{ADMIN_USER_EMAIL}')
     ]
-    MANAGERS=ADMINS
+    MANAGERS = ADMINS
 # under django 4.2
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 

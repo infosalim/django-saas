@@ -1,13 +1,20 @@
-{% extends "account/base.html" %}
+{% extends "account/signup.html" %}
 {% load i18n %}
-{% block head_title %}
-    {% translate "Sign out" %}
-{% endblock %}
-{% block whitebox %}
-    <form method="post" action="{% url 'account_logout' %}">
+{% load allauth_ui %}
+{% load widget_tweaks %}
+{% block content %}
+    {% trans "Sign Up" as heading %}
+    {% blocktranslate asvar subheading %}Already have an account? Then please <a href="{{ login_url }}" class="link">sign in</a>.{% endblocktranslate %}
+    {% #container heading=heading subheading=subheading  %}
+    {% if not SOCIALACCOUNT_ONLY %}
+        {% url 'account_signup' as action_url %}
+        {% #form form=form url=action_url button_text=heading %}
+        {{ redirect_field }}
         {% csrf_token %}
-        <p>{% translate "Are you sure you want to sign out?" %}</p>
-        {% translate "Sign out" as signout_message %}
-        {% include "account/_button.html" with text=signout_message %}
-    </form>
+        {% /form %}
+    {% endif %}
+    {% if SOCIALACCOUNT_ENABLED %}
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    {% endif %}
+    {% /container %}
 {% endblock %}
